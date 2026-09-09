@@ -1,0 +1,10 @@
+{
+  "game_version_suffix": "0ceadc7",
+  "engine_version": "2026.07.04",
+  "base_game": "/tmp/pr8935-replay-0cea-base",
+  "pr_game": "/tmp/pr8935-replay-0cea-candidate",
+  "maps": "~/Projects/bar/bar-dev/data/maps",
+  "release_engine": "~/Projects/bar/replay-parity/engines/recoil-2026.07.04/spring-headless",
+  "patched_engine": "~/Projects/bar/RecoilEngine-2026.07.04-parity/build-amd64-linux/spring-headless",
+  "work_dir": "/tmp/pr8935-runner"
+}

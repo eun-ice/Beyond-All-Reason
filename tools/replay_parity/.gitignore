@@ -1,0 +1,4 @@
+replays/
+results/
+__pycache__/
+parity_runner.json
