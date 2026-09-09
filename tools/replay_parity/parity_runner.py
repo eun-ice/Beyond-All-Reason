@@ -35,7 +35,10 @@ def log(msg):
 def load_config(path):
     cfg = json.loads(Path(path).read_text())
     for key in ('base_game', 'pr_game', 'maps', 'release_engine', 'patched_engine'):
-        cfg[key] = str(Path(cfg[key]).expanduser())
+        value = cfg.get(key) or ''
+        cfg[key] = str(Path(value).expanduser()) if value else ''
+        if key == 'patched_engine' and not value:
+            continue  # optional; run with --skip-patched
         if not Path(cfg[key]).exists():
             sys.exit(f'config: {key} does not exist: {cfg[key]}')
     cfg['work_dir'] = str(Path(cfg.get('work_dir', '/tmp/pr8935-runner')).expanduser())
@@ -207,6 +210,9 @@ def main():
     cfg = load_config(args.config)
     if args.work_dir:
         cfg['work_dir'] = args.work_dir
+    if not cfg['patched_engine'] and not args.skip_patched:
+        log('no patched_engine configured, running the release engine only')
+        args.skip_patched = True
     replay, details = get_replay(args.replay_id, cfg, args.force)
     short = args.replay_id[:4]
     demo = Demo(replay)
