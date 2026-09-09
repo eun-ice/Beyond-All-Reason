@@ -66,11 +66,11 @@ local function getTargetability(locals)
 end
 
 local function getTargetList(unitID)
-	return SyncedProxy.gadgetHandler.GG.GetUnitTargetList(unitID)
+	return SyncedProxy.gadgetHandler.GG.GetUnitAttackTargetList(unitID)
 end
 
 local function getTargetListID(unitID)
-	return SyncedProxy.gadgetHandler.GG.GetUnitTargetListID(unitID)
+	return SyncedProxy.gadgetHandler.GG.GetUnitAttackTargetListID(unitID)
 end
 
 local function queueStartsWith(unitID, targetID)
