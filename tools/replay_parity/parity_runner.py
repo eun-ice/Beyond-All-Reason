@@ -19,7 +19,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 # The harness scripts sit next to this file in the repository; the local workspace keeps them in distribution/.
-HARNESS = HERE if (HERE / 'prepare.py').exists() else HERE / 'distribution' / 'pr8935-replay-ab'
+HARNESS = HERE / 'distribution' / 'pr8935-replay-ab' if (HERE / 'distribution' / 'pr8935-replay-ab' / 'prepare.py').exists() else HERE
 sys.path.insert(0, str(HARNESS))
 from replay import Demo, commands  # noqa: E402
 
