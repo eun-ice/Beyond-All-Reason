@@ -1,0 +1,23 @@
+{
+  "sha": "5be6c6a71113175842d282ed78e8c43aa8648273",
+  "engine": "/home/aron/Projects/bar/attack-comparison/unit-predelete-prototype-20261013/builds/candidate/spring-headless",
+  "engine_sha256": "690c0d4b39e86750b258fdca2842e5f6432f08647d3c3d5cb16071a20a54c70b",
+  "checks": [
+    {
+      "scenario": "pending",
+      "equal": true,
+      "samples": [
+        305,
+        305
+      ]
+    },
+    {
+      "scenario": "recycle",
+      "equal": true,
+      "samples": [
+        307,
+        307
+      ]
+    }
+  ]
+}
