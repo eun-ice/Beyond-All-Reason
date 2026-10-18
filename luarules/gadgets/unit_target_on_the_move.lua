@@ -30,7 +30,7 @@ if gadgetHandler:IsSyncedCode() then
 	-- applying the command that removes a target near the clicked position.
 	local deleteMaxDistance = 30
 	-- Maximum entries per Set Target list, including ground targets and appends.
-	local targetListLengthMax = 512
+	local targetListLengthMax = math.huge -- replay-only: compact and inherited lists were uncapped
 	-- Keep a unit target for this many seconds after it leaves LOS or radar.
 	local unseenGraceTime = 1.5
 	-- Per-unit and global caps on expensive weapon-targetability checks. The
@@ -751,8 +751,14 @@ if gadgetHandler:IsSyncedCode() then
 		end
 
 		local teamID = data.teamID
+		-- Old single/area commands occur in recorded replays. Preserve their
+		-- original cap; the new compact command carries unrestricted target lists.
+		local targetLimit = useSharedAppend == false and 128 or math.huge
 		local entries = {}
 		local providedSharedList = not append and not prepend and targetList.sharedList
+		if providedSharedList and #providedSharedList.entries > targetLimit then
+			providedSharedList = nil
+		end
 		if
 			providedSharedList
 			and (providedSharedList.teamID ~= data.teamID or providedSharedList.allyTeam ~= data.allyTeam)
@@ -783,7 +789,7 @@ if gadgetHandler:IsSyncedCode() then
 		local targetCount = #entries
 		if not providedSharedList or append then
 			for i = 1, #incomingEntries do
-				if targetCount >= targetListLengthMax then
+				if targetCount >= targetLimit then
 					break
 				end
 				local targetData = incomingEntries[i]

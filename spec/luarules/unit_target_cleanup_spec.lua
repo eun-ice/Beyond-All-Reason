@@ -187,18 +187,18 @@ local function loadTargetGadget(unitTeams, areaTargets, allied)
 end
 
 describe("Set Target invalid-target cleanup", function()
-	it("retains all individually appended targets", function()
+	it("preserves the legacy limit when replay commands append individual targets", function()
 		local g = loadTargetGadget()
 		for targetID = 10, 149 do
 			g.set(targetID, true)
 		end
 		local targets = g.env.GG.GetUnitTargetList(1)
-		assert.are.equal(140, #targets)
+		assert.are.equal(128, #targets)
 		assert.are.equal(10, targets[1].target)
-		assert.are.equal(149, targets[140].target)
+		assert.are.equal(137, targets[128].target)
 	end)
 
-	it("retains all targets from compact Set Target commands", function()
+	it("allows compact Set Target commands to exceed the legacy limit", function()
 		local g = loadTargetGadget()
 		local targets = {}
 		for targetID = 10, 149 do
@@ -208,7 +208,7 @@ describe("Set Target invalid-target cleanup", function()
 		assert.are.equal(140, #g.env.GG.GetUnitTargetList(1))
 	end)
 
-	it("retains all targets from shifted area commands", function()
+	it("preserves the legacy limit for shifted area commands", function()
 		local areaTargets = {}
 		for targetID = 20, 149 do
 			areaTargets[#areaTargets + 1] = targetID
@@ -217,9 +217,9 @@ describe("Set Target invalid-target cleanup", function()
 		g.set(10)
 		g.set({ 100, 0, 100, 100 }, true)
 		local targets = g.env.GG.GetUnitTargetList(1)
-		assert.are.equal(131, #targets)
+		assert.are.equal(128, #targets)
 		assert.are.equal(10, targets[1].target)
-		assert.are.equal(149, targets[131].target)
+		assert.are.equal(146, targets[128].target)
 	end)
 
 	it("inherits a builder's entire compact target list", function()
