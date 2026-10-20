@@ -1,25 +1,39 @@
 # PR #9541: historical replay comparison branch
 
 This branch is a validation companion, not the proposed merge result.
-The clean PR is `9629ae3c1ac2c946972184f256c0b10dc2d87f02`, rebased onto
-upstream `c8363dedb2a65d11c82f569b54e0209c524dfd7c`.
-The compatibility code revision is `292125f07c65b7294f6956592090c7060ad667c1`;
-subsequent documentation/tooling commits do not change the runtime.
+The current clean parent is `e3dd33508a3bbfbfa6b48694c3154635cd170438` (#9541),
+which includes #9787's fix for #9786. The current compatibility runtime is
+`44040cfb5fd263d786e794cadabca3b413f10dfd`.
+
+## Validation, 2026-10-21
+
+The updated companion passes 843 Lua tests (one existing pending) and all 544
+assertions in the isolated transfer engine fixture. These results replace no
+historical full-replay claims: full replay equality has not been rerun.
+The clean parent has a 512-entry Set Target cap. This companion deliberately
+restores 128 for recorded single/area commands and leaves compact commands and
+inherited lists uncapped. Tests distinguish those policies explicitly.
+
+#9787 tracks the cursor when a live mouse gesture starts. Historical replay
+comparison must continue to replay recorded network commands, not regenerate
+commands by simulating mouse gestures. The widget fix remains in this branch;
+this is a rationale for preserving recorded inputs, not a claim of verified
+whole-replay parity. Alliance cleanup and allocation fixes also remain; a
+replay exercising their changed behavior may require an explicit additional
+compatibility delta, never a silent change to the baseline.
 
 ## Review the split
 
-The clean PR has four commits: shared lists/native packet batching; visibility
-lifetime preservation and builder inheritance coverage; mouse/split modifiers;
-and budgeted validation with deferred transfer pruning and active-target
-reassertion. It has no historical 128-entry command cap or full slow sweep.
-8192 is a per-frame work budget, not a target-list size limit.
+The clean PR includes shared lists/native batching, the review fixes and the
+512-entry limit. The companion restores historical command limits and timing.
+8192 remains a per-frame work budget, not a list-size limit.
 
 The companion adds two independently reviewable runtime commits:
 
-- `59021cb66a`: restore the 128-entry cap for old single/area commands. Compact
+- `f66af828f0`: restore the 128-entry cap for old single/area commands. Compact
   commands and inherited builder lists remain uncapped. Tests assert the
   historical cap only on this branch.
-- `292125f07c`: restore the old 15-frame full sweep, slow-frame acquisition gap,
+- `bba90c747c`: restore the old 15-frame full sweep, slow-frame acquisition gap,
   deferred empty-list removal, synchronous transfer pruning, and lack of
   per-frame reassertion outside the acquisition chunk. These deliberately
   restore historical timing and its performance/behavior limitations. The
@@ -29,16 +43,16 @@ The companion adds two independently reviewable runtime commits:
   and builder inheritance coverage remain.
 
 ```sh
-git diff 9629ae3c1ac2c946972184f256c0b10dc2d87f02 292125f07c65b7294f6956592090c7060ad667c1 -- luarules spec
+git diff e3dd33508a3bbfbfa6b48694c3154635cd170438 44040cfb5fd263d786e794cadabca3b413f10dfd -- luarules spec
 ```
 
 Do not infer that all historical behavior is desirable, or that replay equality
 proves the clean implementation incorrect. In particular, the companion's full
 sweep is intentionally not bounded by the clean branch's validation budget.
 
-## Validation, 2026-10-18
+## Archived validation, 2026-10-18 (pre-rebase revisions)
 
-| Check | Clean runtime SHA above | Compatibility runtime SHA above |
+| Check | Old clean `9629ae3c1a` | Old compatibility `292125f07c` |
 | --- | --- | --- |
 | Full Lua suite, normal order | 782 passed, 1 existing pending | 776 passed, 1 existing pending |
 | Full Lua suite, reverse file order | 782 passed, 1 existing pending | 776 passed, 1 existing pending |
