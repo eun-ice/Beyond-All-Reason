@@ -1,9 +1,9 @@
 # PR #8935: historical replay comparison branch
 
-Clean PR revision: `5be6c6a71113175842d282ed78e8c43aa8648273`.
-It is stacked on clean #9541 `9629ae3c1ac2c946972184f256c0b10dc2d87f02`,
-which contains upstream `c8363dedb2a65d11c82f569b54e0209c524dfd7c`.
-Compatibility runtime revision: `fcca1a0d347ffe4a6f5ddc2e6c0c45d89aa6a0df`.
+Clean PR revision: `33230e4420` (runtime tested at `59795df9fa`).
+It is stacked on clean #9541 `e3dd33508a`, including #9787's fix for #9786.
+Compatibility runtime tested at `945ef8f4e4`; rebased runtime is `ea20d6808e`.
+The intervening clean-branch change strengthens command-ID assertions only.
 Subsequent documentation commits do not change the runtime.
 
 ## Scope of the split
@@ -18,9 +18,9 @@ lifecycle behavior on those engines.
 Historical replay behavior is isolated in two commits adapted from #9541's
 [comparison branch](https://github.com/eun-ice/Beyond-All-Reason/tree/validation/pr9541-historical-replay-parity/validation/pr9541):
 
-- `20f2ba974c`: restore the 128-target limit for old single/area Set Target
+- `6929d6d9e6`: restore the 128-target limit for old single/area Set Target
   commands. Compact lists and builder inheritance remain uncapped.
-- `fcca1a0d34`: restore the 15-frame full sweep, historical pruning and
+- `4dc96e879e`: restore the 15-frame full sweep, historical pruning and
   acquisition cadence, deferred empty-list removal, synchronous transfer
   pruning, and absence of reassertion outside the acquisition chunk.
 
@@ -30,14 +30,18 @@ semantics in both variants. The compatibility branch deliberately does not
 promise the clean branch's validation budget or reassertion behavior.
 
 ```sh
-git diff 5be6c6a71113175842d282ed78e8c43aa8648273 fcca1a0d347ffe4a6f5ddc2e6c0c45d89aa6a0df -- luarules spec
+git diff feature/stacked-attack-target-controller validation/pr8935-historical-replay-parity -- luarules spec
 ```
 
-The Attack controller and gadget lifecycle dispatch are unchanged from the
-previous PR head `9f235eac9913d385619ef2cad618292da3f99688`. Relative to that
-head, the compatibility targeting gadget retains only the validation-queue
-index and replacement-list cursor fixes. This makes the replay-only delta
-reviewable without discarding those correctness fixes.
+Both branches inherit the reviewed allocation, selection-state and selective
+alliance-pruning fixes. The clean branch caps Set Target at 512; Attack remains
+uncapped. This comparison branch restores the historical 128 limit for legacy
+single/area commands and leaves compact lists uncapped. The inherited mouse-press
+origin fix affects live gestures; recorded network commands already contain their
+coordinates. Historical equality still needs replay-specific validation.
+
+Known pre-existing limitation: a shared Attack owner can keep Set Target entries
+past sensor expiry through `keepUnseen`. This refresh does not fix that issue.
 
 ## Validation and reproduction
 
@@ -48,14 +52,17 @@ lx --lua-version 5.1 test
 SPEC_ORDER=reverse lx --lua-version 5.1 test
 ```
 
-The clean revision passes 819 tests in each order, with one existing pending
-unit-definition test. The compatibility revision passes 813 tests in each
-order, with the same pending test. Both variants pass all four engine fixtures
-(two scenarios, native and compact), with equal movement, weapon-target and
-event traces: 305 observations per pending run and 307 per recycle run.
-StyLua 2.5.2 checks the changed Lua files. Whole-tree EmmyLua 0.22.0 reports the
-same three errors as upstream, in AtlasOnDemand.lua and gui_pip.lua; this is
-not a passing CI-pinned 0.24.0 type gate.
+On October 21, the full clean suite passed 887 tests and the compatibility
+suite passed 881, each with one existing pending test. The strengthened drag
+command-ID fixture passes all nine cases on both branches. Both variants pass
+all four engine fixtures (two scenarios, native and compact), with equal
+movement, weapon-target and event traces: 305 observations per pending run and
+307 per recycle run. Evidence and exact tested SHAs are preserved locally under
+`stack-refresh-20261021/`. Full historical replays were not rerun.
+
+Archived October 18 validation: the earlier clean and compatibility revisions
+passed 819 and 813 tests respectively in both suite orders. Their type-check
+results and replay evidence do not establish validation of the current heads.
 
 Engine checks use the existing UnitPreDelete development build, SHA-256
 `690c0d4b39e86750b258fdca2842e5f6432f08647d3c3d5cb16071a20a54c70b`, and the
@@ -76,7 +83,7 @@ The source checkout must stay at the tested revision throughout each run.
 Require completion and actual compact-controller coverage. Compare movement,
 weapon targets and events in `behavior.json`, allowing the queue-head
 representation to differ. The local `lifecycle.py` runner and JSON manifests
-under `pr8935-validation-20261018/` preserve the exact invocations and comparison.
+under `stack-refresh-20261021/` preserve the exact invocations and comparison.
 These focused fixtures are not full replay or full-game resign/take tests.
 
 The UI integration runner currently shares a mutable function environment
