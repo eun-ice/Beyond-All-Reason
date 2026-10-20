@@ -497,7 +497,7 @@ describe("Independent Attack and Set Target lists", function()
 end)
 
 describe("Stacked Set Target limits", function()
-	it("retains Attack lists longer than the Set Target cap", function()
+	it("keeps both compact Attack and Set Target replay lists uncapped", function()
 		local g = loadTargetGadget()
 		local targets = {}
 		for index = 1, 600 do
@@ -506,7 +506,7 @@ describe("Stacked Set Target limits", function()
 		g.env.GG.SetUnitAttackTargetList(1, 1, targets, {})
 		assert.equal(600, #g.env.GG.GetUnitAttackTargetList(1))
 		g.set(targets, false, true)
-		assert.equal(512, #g.env.GG.GetUnitTargetList(1))
+		assert.equal(600, #g.env.GG.GetUnitTargetList(1))
 		assert.equal(600, #g.env.GG.GetUnitAttackTargetList(1))
 	end)
 end)
