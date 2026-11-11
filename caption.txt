@@ -1,0 +1,17 @@
+BAR PR #10075 — raw before/after game screenshots
+
+Both captures: All That Glitters v2.2.3, recorded game test-31691-a617033,
+simulation frame2500, 1425x1000, identical camera (ta,px3460,pz1424,height900).
+Real armsilo missile launch; impact frame1883 at3559.72998,183.993912,1424.
+The gantry has increased health to survive for inspecting its foundation.
+Same engine without the proposed engine foundation patch:
+796fe29b275d30b6b130839e1a49550b892dc10ccfbd357c61e74f4482c34d31.
+Only the map_explosion_deformation_fix gadget changes between runs.
+Before: parent of BAR commit b6eaea81764c5e13f765495a41d0173539245e32.
+After: BAR commit b6eaea81764c5e13f765495a41d0173539245e32.
+Identical logged impacts, damage and death frames. Ground rendering and synced
+height measurements agree at all961 sampled points in each capture.
+Before: foundation height span11.632538, unit Y168.267059.
+After: all625 foundation vertices and unit Y176.872253 (original height).
+These are direct engine screenshots, without cropping, retouching or generated
+content. Cosmetic scorch-decal appearance varies between runs.
