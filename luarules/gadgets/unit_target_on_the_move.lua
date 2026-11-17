@@ -1415,6 +1415,10 @@ if gadgetHandler:IsSyncedCode() then
 
 	local function processSlowListUpdates()
 		for unitID, unitData in pairsNext, setTargetData do
+			if unitData.pendingTargetPassive then
+				unitData.pendingTargetPassive = nil
+				setTargetPassive(unitID, unitData)
+			end
 			local pendingEmptyList = unitData.pendingEmptyList
 			unitData.pendingEmptyList = nil
 			if pendingEmptyList == unitData.targetList or not unitData.targets[1] then
@@ -1491,7 +1495,12 @@ if gadgetHandler:IsSyncedCode() then
 				local newCurrentIndex = oldToNewIndex[unitData.currentIndex]
 				local newScanIndex = nextRetainedIndex(unitData.scanIndex or 1)
 				if not newCurrentIndex then
-					setTargetPassive(unitID, unitData)
+					if deferRemoval then
+						-- Apply native queue/target changes in the original per-unit slow-pass order.
+						unitData.pendingTargetPassive = true
+					else
+						setTargetPassive(unitID, unitData)
+					end
 				end
 				assignTargetList(unitData, newList)
 				unitData.currentIndex = newCurrentIndex or 1
