@@ -56,7 +56,7 @@ local function hasActiveHumanTeammate(teamID)
 			tID ~= teamID
 			and not select(4, spGetTeamInfo(tID, false))
 			and (not luaAI or luaAI == "")
-			and Spring.GetTeamRulesParam(tID, "numActivePlayers") > 0
+			and (Spring.GetTeamRulesParam(tID, "numActivePlayers") or 0) > 0
 		then
 			return true
 		end
@@ -95,8 +95,8 @@ if gadgetHandler:IsSyncedCode() then
 
 	local function handleMassSelfD(teamID, unitCount, selfdUnitCount)
 		local strikes = massSelfdStrikesByTeamID[teamID] or 0
-		if strikes >= allowedStrikes then
-			return -- warn + analytics cycle finished; allow freely
+		if strikes >= allowedStrikes or not hasActiveHumanTeammate(teamID) then
+			return
 		end
 
 		strikes = strikes + 1

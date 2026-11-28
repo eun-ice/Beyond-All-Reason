@@ -10,6 +10,7 @@
   - Veterancy is 0 before minute 25 and reaches 0.8 at minute 45 for every unit.
   - Resurrection times start between 45 and 120 seconds, by wreck power, and shorten after minute 45. Debris still waits twice that unit's time.
 - [Controls]
+  - Mass self-destruct starts on the first attempt when you have no active human teammates.
   - Share Unit can be queued. Shift+Share Unit from a factory queues that command on produced units, instead of sharing the factory.
   - Pressing a command key or starting the drag of an area or line exits a current selection drag.
 - [Navy units] Matching land units: Mine uncloak distance 8 -> 30. Radar health 110 -> 180. Nuke subs damage and falloff match silos.
